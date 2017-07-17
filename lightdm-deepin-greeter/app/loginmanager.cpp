@@ -250,6 +250,8 @@ void LoginManager::initUI()
     setObjectName("LoginManagerTool");
 
     m_sessionWidget = new SessionWidget(this);
+    m_sessionWidget->setFixedHeight(200);
+    m_sessionWidget->setFixedWidth(qApp->primaryScreen()->geometry().width());
     m_sessionWidget->hide();
     m_logoWidget = new LogoWidget(this);
     m_switchFrame = new SwitchFrame(this);
@@ -351,13 +353,13 @@ void LoginManager::initConnect()
     connect(m_userWidget, &UserWidget::userChanged, [&](const QString username) {
 
         qDebug()<<"selected user: " << username;
-        qDebug()<<"previous selected user: " << m_sessionWidget->lastSelectedUser();
+        qDebug()<<"previous selected user: " << m_sessionWidget->currentSessionOwner();
         m_userWidget->saveLastUser();
 
-        qDebug() << username << m_sessionWidget->lastSelectedUser();
+        qDebug() << username << m_sessionWidget->currentSessionOwner();
 
         // goto previous lock
-        if (username != m_sessionWidget->lastSelectedUser())
+        if (username != m_sessionWidget->currentSessionOwner())
         {
             QProcess *process = new QProcess;
             process->start("dde-switchtogreeter " + username);
@@ -536,7 +538,7 @@ void LoginManager::authenticate()
         m_greeter->cancelAuthentication();
 
     //save user last choice
-    m_sessionWidget->saveUserLastSession(m_userWidget->currentUser());
+//    m_sessionWidget->saveUserLastSession(m_userWidget->currentUser());
     m_userWidget->saveLastUser();
 
     m_greeter->authenticate(username);
