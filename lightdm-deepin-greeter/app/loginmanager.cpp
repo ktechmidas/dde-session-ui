@@ -140,7 +140,7 @@ void LoginManager::updateWidgetsPosition()
     m_sessionWidget->setFixedWidth(width);
     m_sessionWidget->move(0, (height - m_sessionWidget->height()) / 2 - 70); // 中间稍往上的位置
     m_logoWidget->move(48, height - m_logoWidget->height() - 36); // left 48px and bottom 36px
-    m_switchFrame->move(width - m_switchFrame->width() - 20, height - m_switchFrame->height());
+    m_controlWidget->move(width - m_controlWidget->width(), height - m_controlWidget->height() - 36);
     m_requireShutdownWidget->setFixedWidth(width);
     m_requireShutdownWidget->setFixedHeight(300);
     m_requireShutdownWidget->move(0,  (height - m_requireShutdownWidget->height())/2 - 60);
@@ -249,12 +249,13 @@ void LoginManager::initUI()
     setFixedSize(qApp->desktop()->size());
     setObjectName("LoginManagerTool");
 
+    m_controlWidget = new ControlWidget(this);
+
     m_sessionWidget = new SessionWidget(this);
     m_sessionWidget->setFixedHeight(200);
     m_sessionWidget->setFixedWidth(qApp->primaryScreen()->geometry().width());
     m_sessionWidget->hide();
     m_logoWidget = new LogoWidget(this);
-    m_switchFrame = new SwitchFrame(this);
     m_userWidget = new UserWidget(this);
 
     m_userWidget->setObjectName("UserWidget");
@@ -292,8 +293,8 @@ void LoginManager::initUI()
     keyboardLayoutUI();
     leaveEvent(nullptr);
 
-    m_switchFrame->setUserSwitchEnable(m_userWidget->count() > 1);
-    m_switchFrame->setSessionSwitchEnable(m_sessionWidget->sessionCount() > 1);
+    m_controlWidget->setUserSwitchEnable(m_userWidget->count() > 1);
+    m_controlWidget->setSessionSwitchEnable(m_sessionWidget->sessionCount() > 1);
 #ifndef SHENWEI_PLATFORM
     updateStyle(":/skin/login.qss", this);
 #endif
@@ -341,14 +342,14 @@ void LoginManager::initData() {
 
 void LoginManager::initConnect()
 {
-    connect(m_switchFrame, &SwitchFrame::triggerSwitchUser, this, &LoginManager::chooseUserMode);
-    connect(m_switchFrame, &SwitchFrame::triggerSwitchUser, m_userWidget, &UserWidget::expandWidget, Qt::QueuedConnection);
+    connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, &LoginManager::chooseUserMode);
+    connect(m_controlWidget, &ControlWidget::requestSwitchUser, m_userWidget, &UserWidget::expandWidget, Qt::QueuedConnection);
 
-    connect(m_switchFrame, &SwitchFrame::triggerPower, this, &LoginManager::showShutdownFrame);
-    connect(m_switchFrame, &SwitchFrame::triggerSwitchSession, this, &LoginManager::chooseSessionMode);
+    connect(m_controlWidget, &ControlWidget::requestShutdown, this, &LoginManager::showShutdownFrame);
+    connect(m_controlWidget, &ControlWidget::requestSwitchSession, this, &LoginManager::chooseSessionMode);
     connect(m_passWdEdit, &PassWdEdit::submit, this, &LoginManager::login);
     connect(m_sessionWidget, &SessionWidget::sessionChanged, this, &LoginManager::choosedSession);
-    connect(m_sessionWidget, &SessionWidget::sessionChanged, m_switchFrame, &SwitchFrame::chooseToSession, Qt::QueuedConnection);
+    connect(m_sessionWidget, &SessionWidget::sessionChanged, m_controlWidget, &ControlWidget::chooseToSession, Qt::QueuedConnection);
 
     connect(m_userWidget, &UserWidget::userChanged, [&](const QString username) {
 
@@ -422,7 +423,7 @@ void LoginManager::expandUserWidget() {
 //    qDebug() << "expandState:" << expandState;
 //    if (expandState == 1) {
 //        qDebug() << "expandState:" << expandState;
-//        QMetaObject::invokeMethod(m_switchFrame, "triggerSwitchUser", Qt::QueuedConnection);
+//        QMetaObject::invokeMethod(m_controlWidget, "requestSwitchUser", Qt::QueuedConnection);
 //    }
 
 //    m_utilFile->setExpandState(0);
