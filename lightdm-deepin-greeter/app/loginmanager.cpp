@@ -418,15 +418,14 @@ void LoginManager::initDateAndUpdate() {
 }
 
 void LoginManager::expandUserWidget() {
-    m_utilFile = new UtilFile(this);
-    int expandState = m_utilFile->getExpandState();
-    qDebug() << "expandState:" << expandState;
-    if (expandState == 1) {
-        qDebug() << "expandState:" << expandState;
-        QMetaObject::invokeMethod(m_switchFrame, "triggerSwitchUser", Qt::QueuedConnection);
-    }
+//    int expandState = m_utilFile->getExpandState();
+//    qDebug() << "expandState:" << expandState;
+//    if (expandState == 1) {
+//        qDebug() << "expandState:" << expandState;
+//        QMetaObject::invokeMethod(m_switchFrame, "triggerSwitchUser", Qt::QueuedConnection);
+//    }
 
-    m_utilFile->setExpandState(0);
+//    m_utilFile->setExpandState(0);
 }
 
 void LoginManager::message(QString text, QLightDM::Greeter::MessageType type)
@@ -479,7 +478,7 @@ void LoginManager::authenticationComplete()
 
         m_authFailureCount++;
 
-        if (m_authFailureCount < UtilFile::GetAuthLimitation()) {
+        if (m_authFailureCount < INT_MAX) {
             m_passWdEdit->setAlert(true, tr("Wrong Password"));
         } else {
             m_authFailureCount = 0;
