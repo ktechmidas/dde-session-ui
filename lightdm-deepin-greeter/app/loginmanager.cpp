@@ -101,7 +101,7 @@ static int set_rootwindow_cursor() {
 // Load system cursor --end
 
 LoginManager::LoginManager(QWidget* parent)
-    : FullscreenBackground(parent),
+    : QFrame(parent),
       m_keyboardMonitor(KeyboardMonitor::instance()),
       m_authFailureCount(0)
 {
@@ -130,9 +130,8 @@ LoginManager::~LoginManager()
 
 void LoginManager::updateWidgetsPosition()
 {
-    const QRect r = primaryRect();
-    const int h = r.height();
-    const int w = r.width();
+    const int h = height();
+    const int w = width();
 
     m_userWidget->setFixedWidth(w);
     m_userWidget->move(0, (h - m_userWidget->height()) / 2 - 95); // center and margin-top: -95px
@@ -141,6 +140,7 @@ void LoginManager::updateWidgetsPosition()
     m_sessionWidget->move(0, (h - m_sessionWidget->height()) / 2 - 70); // 中间稍往上的位置
     m_logoWidget->move(48, h - m_logoWidget->height() - 36); // left 48px and bottom 36px
     m_controlWidget->move(w - m_controlWidget->width(), h - m_controlWidget->height() - 36);
+    m_passWdEdit->move((w - m_passWdEdit->width()) / 2, (h - m_passWdEdit->height()) / 2);
     m_requireShutdownWidget->setFixedWidth(w);
     m_requireShutdownWidget->setFixedHeight(300);
     m_requireShutdownWidget->move(0,  (h - m_requireShutdownWidget->height())/2 - 60);
@@ -151,7 +151,7 @@ void LoginManager::updateBackground(QString username)
     const QSettings settings("/var/lib/AccountsService/users/" + username, QSettings::IniFormat);
     const QString background = settings.value("User/GreeterBackground").toString();
 
-    setBackground(background);
+//    setBackground(background);
 //    LoginFrame * frame = qobject_cast<LoginFrame*>(parent());
 //    frame->setBackground(background);
 }
@@ -237,14 +237,14 @@ void LoginManager::mousePressEvent(QMouseEvent *e)
 
 void LoginManager::initUI()
 {
-    setFixedSize(qApp->desktop()->size());
+//    setFixedSize(qApp->desktop()->size());
     setObjectName("LoginManagerTool");
 
     m_controlWidget = new ControlWidget(this);
 
     m_sessionWidget = new SessionWidget(this);
     m_sessionWidget->setFixedHeight(200);
-    m_sessionWidget->setFixedWidth(qApp->primaryScreen()->geometry().width());
+//    m_sessionWidget->setFixedWidth(qApp->primaryScreen()->geometry().width());
     m_sessionWidget->hide();
     m_logoWidget = new LogoWidget(this);
     m_userWidget = new UserWidget(this);
