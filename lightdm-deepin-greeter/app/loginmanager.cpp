@@ -120,8 +120,9 @@ LoginManager::LoginManager(QWidget* parent)
     m_sessionWidget->switchToUser(u);
     m_passWdEdit->show();
     m_passWdEdit->setFocus();
-    updateBackground(u);
     updateUserLoginCondition(u);
+
+    QTimer::singleShot(1, this, [=] { updateBackground(u); });
 }
 
 LoginManager::~LoginManager()
@@ -151,9 +152,7 @@ void LoginManager::updateBackground(QString username)
     const QSettings settings("/var/lib/AccountsService/users/" + username, QSettings::IniFormat);
     const QString background = settings.value("User/GreeterBackground").toString();
 
-//    setBackground(background);
-//    LoginFrame * frame = qobject_cast<LoginFrame*>(parent());
-//    frame->setBackground(background);
+    emit requestBackground(background);
 }
 
 void LoginManager::updateUserLoginCondition(QString username)
