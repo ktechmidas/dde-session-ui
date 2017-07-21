@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
             if (showUserList) {
                 lockFrame.showUserList();
             } else {
-                lockFrame.show();
+                lockFrame.showFullScreen();
             }
         } else {
             lockFrame.hide();
